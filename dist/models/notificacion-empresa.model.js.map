@@ -1,0 +1,1 @@
+{"version":3,"file":"notificacion-empresa.model.js","sourceRoot":"","sources":["../../models/notificacion-empresa.model.ts"],"names":[],"mappings":";;;;;;AAAA,yCAAqC;AACrC,kEAAiC;AAGpB,QAAA,sBAAsB,GAAG,oBAAE,CAAC,MAAM,CAAE,yBAAyB,EAAE;IAGxE,MAAM,EAAE;QACJ,IAAI,EAAE,qBAAS,CAAC,OAAO;QACvB,UAAU,EAAE,IAAI;QAChB,SAAS,EAAE,KAAK;KACnB;CAGJ,EAAC;IACE,eAAe,EAAE,IAAI;CACxB,CAAC,CAAA"}
