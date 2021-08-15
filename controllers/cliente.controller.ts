@@ -46,6 +46,7 @@ export const obtenerCliente = async ( req: Request, res: Response ) => {
         const cliente = await models.Cliente.findOne( { 
                 attributes:[['cli_id','id'],'nombre'],
                 where: {
+                    cli_id: id,
                     estado: true
                 },
                 include:{

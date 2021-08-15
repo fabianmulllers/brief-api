@@ -26,7 +26,9 @@ const controllers = __importStar(require("../controllers"));
 const middlewares = __importStar(require("../middlewares"));
 const helpers = __importStar(require("../helpers"));
 exports.areaRouter = express_1.Router();
-exports.areaRouter.get('/', controllers.obtenerAreas);
+exports.areaRouter.get('/', [
+    middlewares.validarJWT,
+], controllers.obtenerAreas);
 exports.areaRouter.get('/:id', [
     express_validator_1.check('id').custom(helpers.existIdArea),
     middlewares.validarJWT,
@@ -45,5 +47,9 @@ exports.areaRouter.delete('/:id', [
     middlewares.validarCampos
 ], controllers.eliminarArea);
 exports.areaRouter.post('/agregar-roles', controllers.agregarRoles);
-exports.areaRouter.get('/ver-roles/:id', controllers.verRoles);
+exports.areaRouter.get('/ver-roles/:id', [
+    express_validator_1.check('id').custom(helpers.existIdArea),
+    middlewares.validarJWT,
+    middlewares.validarCampos
+], controllers.verRoles);
 //# sourceMappingURL=area.router.js.map

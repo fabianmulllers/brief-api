@@ -28,6 +28,10 @@ exports.authRouter = express_1.Router();
 exports.authRouter.post('/', [
     express_validator_1.check('email', 'Ingresa un email valido').isEmail(),
     express_validator_1.check('password', 'Ingresa password').notEmpty(),
+    middlewares.verificarUsuario,
     middlewares.validarCampos
 ], controllers.login);
+exports.authRouter.get('/validar-token', [
+    middlewares.validarJWT,
+], controllers.validarToken);
 //# sourceMappingURL=auth.router.js.map

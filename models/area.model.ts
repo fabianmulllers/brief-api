@@ -25,6 +25,3 @@ export const Area = db.define('area',{
 });
 
 
-
-
-Area.belongsToMany( Role,{ through:"role_area", foreignKey: 'are_id'});

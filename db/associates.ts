@@ -41,7 +41,7 @@ models.Role.hasMany( models.Usuario,{
 } );
 
 //Un role puede permanecer a varias areas
-models.Role.belongsToMany( models.Area,{ through: "role_area", foreignKey:'rol_id' })
+models.Role.belongsToMany( models.Area,{ through: models.RoleArea, foreignKey:'rol_id' })
 
 
 /**
@@ -53,7 +53,7 @@ models.Area.hasMany( models.Usuario,{
 } );
 
 // Un area puede tener varios roles
-models.Area.belongsToMany( models.Role,{ through: "role_area", foreignKey:'are_id' } );
+models.Area.belongsToMany( models.Role,{ through: models.RoleArea, foreignKey:'are_id' } );
 
 // un area puede estar asociado a varios Brief
 models.Area.belongsToMany( models.Brief,{ through:models.BriefArea, foreignKey:'are_id'} ); 

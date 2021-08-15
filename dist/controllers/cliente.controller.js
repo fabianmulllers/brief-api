@@ -65,6 +65,7 @@ const obtenerCliente = (req, res) => __awaiter(void 0, void 0, void 0, function*
         const cliente = yield models.Cliente.findOne({
             attributes: [['cli_id', 'id'], 'nombre'],
             where: {
+                cli_id: id,
                 estado: true
             },
             include: {

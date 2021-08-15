@@ -21,4 +21,5 @@ __exportStar(require("./brief-area.model"), exports);
 __exportStar(require("./comentario-brief.model"), exports);
 __exportStar(require("./multimedia.model"), exports);
 __exportStar(require("./notificacion-comentario.model"), exports);
+__exportStar(require("./roleArea.model"), exports);
 //# sourceMappingURL=index.js.map

@@ -12,8 +12,8 @@ export const obtenerUsuarios = async ( req: Request, res: Response) => {
     try {
 
         const usuarios = await Usuario.findAll( { 
-            attributes:['nombre','email','avatar'],
-            where: { estado: true }, 
+            where:{ estado: true },
+            attributes:[['usu_id','id'],'nombre','email','avatar','estado'],
             include:[
                 {
                     model: Area,
@@ -43,30 +43,28 @@ export const obtenerUsuario = async ( req: Request, res: Response) => {
     try {
          
         const { id } = req.params
-        
-        const usuario: any = await Usuario.findByPk( 
-            id,
-            // {
-            //     include:[
-            //         {
-            //             model: Area,
-            //             attributes:['nombre']
-            //         },
-            //         {
-            //             model: Role,
-            //             attributes:['nombre']
-            //         }
-            //     ]
-            // } 
-        ).then( (user:any) => {
-            user.getRole().then( (role:any) => {
-                res.json(role)
-            })
-        })
+
+        const usuario = await Usuario.findOne( {
+            where:{
+                estado: true,
+                usu_id: id
+            },
+            attributes:[['usu_id','id'],'nombre','email','avatar','estado'],
+            include:[
+                {
+                    model: Area,
+                    attributes:[['are_id','id'],'nombre']
+                },
+                {
+                    model:Role,
+                    attributes:[['rol_id','id'],'nombre']
+                }
+            ],
+
+        });
 
 
-
-        // return res.json( usuario )
+        return res.json( usuario )
 
     } catch (error) {
         
@@ -100,15 +98,16 @@ export const crearUsuario = async( req: Request, res: Response) => {
         
         const resp = await Usuario.findByPk( 
             usuario.usu_id,
-            {
+            {    
+                attributes:[['usu_id','id'],'nombre','email','avatar','estado'],
                 include:[
                     {
                         model: Area,
-                        attributes:['nombre']
+                        attributes:[['are_id','id'],'nombre']
                     },
                     {
                         model: Role,
-                        attributes:['nombre']
+                        attributes:[['rol_id','id'],'nombre']
                     }
                 ]
             })
@@ -130,16 +129,21 @@ export const actualizarUsuario = async( req: Request, res: Response) => {
     try {
 
         const { id } = req.params;
-        const { estado, password, ...user } = req.body;
+        const { estado, password, role, area, ...user } = req.body;
         
         const usuario = await Usuario.findByPk( id );
-            
+
         if( password ){
             const salt = bcrypt.genSaltSync();
             user.password = bcrypt.hashSync( password, salt );
         }
-    
-        await usuario?.update( user, { where: { usu_id: id } } );
+
+        ( role )?user.rol_id = role :  '';
+        ( area )?user.are_id = area :  '';
+        
+        await usuario?.update( user, { 
+            where: { usu_id: id } 
+        } );
 
         res.json( usuario);
 

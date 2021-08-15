@@ -28,10 +28,12 @@ const middlewares = __importStar(require("../middlewares"));
 exports.usuarioRouter = express_1.Router();
 exports.usuarioRouter.get('/', controllers.obtenerUsuarios);
 exports.usuarioRouter.get('/:id', [
+    middlewares.validarJWT,
     express_validator_1.check('id').custom(helpers.existeIdUsuario),
     middlewares.validarCampos
 ], controllers.obtenerUsuario);
 exports.usuarioRouter.post('/', [
+    middlewares.validarJWT,
     express_validator_1.check('nombre', 'El nombre es requerido').notEmpty(),
     express_validator_1.check('email', 'Debes ingresar un email valido').isEmail(),
     express_validator_1.check('password', 'El password es requerido').notEmpty(),
@@ -45,6 +47,7 @@ exports.usuarioRouter.post('/', [
 ], controllers.crearUsuario);
 exports.usuarioRouter.put('/:id', [
     express_validator_1.check('id').custom(helpers.existeIdUsuario),
+    middlewares.existEmailUsuario,
     middlewares.validarCampos
 ], controllers.actualizarUsuario);
 exports.usuarioRouter.delete('/:id', [

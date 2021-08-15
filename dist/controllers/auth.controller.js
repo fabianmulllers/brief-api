@@ -27,37 +27,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const usuario_model_1 = require("../models/usuario.model");
+exports.validarToken = exports.login = void 0;
 const helpers = __importStar(require("../helpers"));
+const models = __importStar(require("../models"));
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { email, password } = req.body;
+        const { email } = req.body;
         //obtenemos el usuario por el email
-        const usuario = yield usuario_model_1.Usuario.findOne({ where: { email: email } });
-        if (!usuario) {
-            return res.status(400).json({
-                msg: `No existe un usuario con el email`
-            });
-        }
-        console.log(usuario);
-        if (!usuario.estado) {
-            return res.status(400).json({
-                msg: `El usuario actualmente esta inactivo`
-            });
-        }
-        //verificamos si el password esta correcto
-        if (!bcrypt_1.default.compareSync(password, usuario.password)) {
-            return res.status(400).json({
-                msg: `El password ingresado es incorrecto`
-            });
-        }
+        let usuario = yield models.Usuario.findOne({
+            attributes: ['nombre', 'email', 'avatar'],
+            where: { email: email },
+            include: [
+                {
+                    attributes: [['are_id', 'id'], 'nombre'],
+                    model: models.Area
+                },
+                {
+                    attributes: [['rol_id', 'id'], 'nombre'],
+                    model: models.Role
+                }
+            ]
+        });
         const token = yield helpers.generarJWT(usuario.email);
+        usuario;
         return res.json({
             usuario,
             token
@@ -71,4 +64,35 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const validarToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { email } = req.usuario;
+        let usuario = yield models.Usuario.findOne({
+            attributes: ['nombre', 'email', 'avatar'],
+            where: { email: email },
+            include: [
+                {
+                    attributes: [['are_id', 'id'], 'nombre'],
+                    model: models.Area
+                },
+                {
+                    attributes: [['rol_id', 'id'], 'nombre'],
+                    model: models.Role
+                }
+            ]
+        });
+        const token = yield helpers.generarJWT(usuario.email);
+        return res.json({
+            usuario,
+            token: token
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            msg: helpers.errorServidor()
+        });
+    }
+});
+exports.validarToken = validarToken;
 //# sourceMappingURL=auth.controller.js.map

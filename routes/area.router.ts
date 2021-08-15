@@ -8,7 +8,10 @@ import * as helpers from '../helpers'
 export const areaRouter = Router() ;
 
 
-areaRouter.get('/',controllers.obtenerAreas);
+areaRouter.get('/',[
+    middlewares.validarJWT,
+],
+controllers.obtenerAreas);
 
 areaRouter.get('/:id',[
     check('id').custom( helpers.existIdArea ),
@@ -37,4 +40,8 @@ areaRouter.delete('/:id',[
 areaRouter.post('/agregar-roles',controllers.agregarRoles)
 
 
-areaRouter.get('/ver-roles/:id',controllers.verRoles)
+areaRouter.get('/ver-roles/:id',[
+    check('id').custom( helpers.existIdArea ),
+    middlewares.validarJWT,
+    middlewares.validarCampos
+],controllers.verRoles)

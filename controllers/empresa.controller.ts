@@ -10,6 +10,7 @@ export const obtenerEmpresas = async ( req:Request, res:Response ) => {
     try {
         
         const empresas = await models.Empresa.findAll( { 
+            attributes:[['emp_id','id'],'nombre'],
             where: {
                 estado: true
             }
@@ -34,7 +35,12 @@ export const obtenerEmpresa = async ( req:Request, res:Response ) => {
         
         const { id } = req.params;
         
-        const empresa = await models.Empresa.findByPk( id )
+        const empresa = await models.Empresa.findByPk( 
+            id,
+            {
+                attributes:[['emp_id','id'], 'nombre']
+            }
+        )
             .catch( error => {
                 return res.status(400).json({
                      msg: error.errors[0].messages  

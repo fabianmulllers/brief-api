@@ -35,6 +35,7 @@ const models_1 = require("../models");
 const obtenerEmpresas = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const empresas = yield models.Empresa.findAll({
+            attributes: [['emp_id', 'id'], 'nombre'],
             where: {
                 estado: true
             }
@@ -52,7 +53,9 @@ exports.obtenerEmpresas = obtenerEmpresas;
 const obtenerEmpresa = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const empresa = yield models.Empresa.findByPk(id)
+        const empresa = yield models.Empresa.findByPk(id, {
+            attributes: [['emp_id', 'id'], 'nombre']
+        })
             .catch(error => {
             return res.status(400).json({
                 msg: error.errors[0].messages

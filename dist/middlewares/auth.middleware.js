@@ -27,47 +27,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.existeNombreCliente = void 0;
-const sequelize_1 = require("sequelize");
-const helpers = __importStar(require("../helpers"));
+exports.verificarUsuario = void 0;
 const models = __importStar(require("../models"));
-const existeNombreCliente = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = req.params;
-        const { nombre } = req.body;
-        //si no existe el nombre no lo validamos
-        if (!nombre) {
-            next();
-        }
-        let filtro;
-        if (id) {
-            filtro = {
-                [sequelize_1.Op.not]: [{ cli_id: id }],
-                nombre: helpers.estandarizarString(nombre),
-                estado: true
-            };
-        }
-        else {
-            filtro = {
-                nombre: helpers.estandarizarString(nombre),
-                estado: true
-            };
-        }
-        const cliente = yield models.Cliente.findOne({ where: filtro });
-        if (cliente) {
-            return res.status(400).json({
-                msg: `EL cliente con el nombre: ${nombre} ya existe`
-            });
-        }
-        next();
-    }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            msg: helpers.errorServidor()
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const verificarUsuario = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = req.body;
+    const usuario = yield models.Usuario.findOne({
+        where: { email }
+    });
+    // verificamos si el usuario existe
+    if (!usuario) {
+        return res.status(400).json({
+            msg: `No existe un usuario con el email`
         });
     }
+    // verificamos si el usuarioe sta activo
+    if (!usuario.estado) {
+        return res.status(400).json({
+            msg: `El usuario actualmente esta inactivo`
+        });
+    }
+    //verificamos si el password esta correcto
+    if (!bcrypt_1.default.compareSync(password, usuario.password)) {
+        return res.status(400).json({
+            msg: `El password ingresado es incorrecto`
+        });
+    }
+    next();
 });
-exports.existeNombreCliente = existeNombreCliente;
-//# sourceMappingURL=cliente-middlewares.js.map
+exports.verificarUsuario = verificarUsuario;
+//# sourceMappingURL=auth.middleware.js.map

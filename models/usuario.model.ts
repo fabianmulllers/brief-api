@@ -14,19 +14,7 @@ export const Usuario = db.define('usuario',{
 
     nombre:{
         type:DataTypes.STRING,
-        allowNull: false,
-        validate:{
-            isAlpha: {
-                msg:"el nombre solo puede contenerer letras"
-            },
-            len:{
-                args:[3,255],
-                msg:"EL nombre tiene que ser entre 3 y 255 caracteres"
-            },
-            notNull:{
-                msg:"el campo no puede ser nulo"
-            }
-        },
+        allowNull: false
     },
 
     email:{

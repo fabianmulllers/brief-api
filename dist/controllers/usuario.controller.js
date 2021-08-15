@@ -49,8 +49,8 @@ const models_1 = require("../models");
 const obtenerUsuarios = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const usuarios = yield models_1.Usuario.findAll({
-            attributes: ['nombre', 'email', 'avatar'],
             where: { estado: true },
+            attributes: [['usu_id', 'id'], 'nombre', 'email', 'avatar', 'estado'],
             include: [
                 {
                     model: models_1.Area,
@@ -75,12 +75,24 @@ exports.obtenerUsuarios = obtenerUsuarios;
 const obtenerUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const usuario = yield models_1.Usuario.findByPk(id).then((user) => {
-            user.getRole().then((role) => {
-                res.json(role);
-            });
+        const usuario = yield models_1.Usuario.findOne({
+            where: {
+                estado: true,
+                usu_id: id
+            },
+            attributes: [['usu_id', 'id'], 'nombre', 'email', 'avatar', 'estado'],
+            include: [
+                {
+                    model: models_1.Area,
+                    attributes: [['are_id', 'id'], 'nombre']
+                },
+                {
+                    model: models_1.Role,
+                    attributes: [['rol_id', 'id'], 'nombre']
+                }
+            ],
         });
-        // return res.json( usuario )
+        return res.json(usuario);
     }
     catch (error) {
         console.log(error);
@@ -104,14 +116,15 @@ const crearUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             });
         });
         const resp = yield models_1.Usuario.findByPk(usuario.usu_id, {
+            attributes: [['usu_id', 'id'], 'nombre', 'email', 'avatar', 'estado'],
             include: [
                 {
                     model: models_1.Area,
-                    attributes: ['nombre']
+                    attributes: [['are_id', 'id'], 'nombre']
                 },
                 {
                     model: models_1.Role,
-                    attributes: ['nombre']
+                    attributes: [['rol_id', 'id'], 'nombre']
                 }
             ]
         });
@@ -128,13 +141,17 @@ exports.crearUsuario = crearUsuario;
 const actualizarUsuario = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const _b = req.body, { estado, password } = _b, user = __rest(_b, ["estado", "password"]);
+        const _b = req.body, { estado, password, role, area } = _b, user = __rest(_b, ["estado", "password", "role", "area"]);
         const usuario = yield models_1.Usuario.findByPk(id);
         if (password) {
             const salt = bcrypt_1.default.genSaltSync();
             user.password = bcrypt_1.default.hashSync(password, salt);
         }
-        yield (usuario === null || usuario === void 0 ? void 0 : usuario.update(user, { where: { usu_id: id } }));
+        (role) ? user.rol_id = role : '';
+        (area) ? user.are_id = area : '';
+        yield (usuario === null || usuario === void 0 ? void 0 : usuario.update(user, {
+            where: { usu_id: id }
+        }));
         res.json(usuario);
     }
     catch (error) {

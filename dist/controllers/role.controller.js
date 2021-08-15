@@ -34,7 +34,10 @@ const helpers = __importStar(require("../helpers"));
 const obtenerRoles = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // obtenemos todos los roles con estado: true (No han sido eliminado)
-        const roles = yield models_1.Role.findAll({ where: { estado: true } });
+        const roles = yield models_1.Role.findAll({
+            attributes: [['rol_id', 'id'], 'nombre'],
+            where: { estado: true }
+        });
         return res.json(roles);
     }
     catch (error) {
@@ -45,11 +48,24 @@ const obtenerRoles = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.obtenerRoles = obtenerRoles;
-const obtenerRole = (req, res) => {
-    res.json({
-        msg: "obtenerRole"
-    });
-};
+const obtenerRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const role = yield models_1.Role.findOne({
+            attributes: [['rol_id', 'id'], 'nombre'],
+            where: {
+                estado: true,
+                rol_id: id
+            }
+        });
+        return res.json(role);
+    }
+    catch (error) {
+        return res.status(500).json({
+            msg: helpers.errorServidor()
+        });
+    }
+});
 exports.obtenerRole = obtenerRole;
 const crearRole = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

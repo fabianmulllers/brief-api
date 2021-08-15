@@ -16,5 +16,6 @@ __exportStar(require("./usuario.middleware"), exports);
 __exportStar(require("./empresa.middleware"), exports);
 __exportStar(require("./cliente-middlewares"), exports);
 __exportStar(require("./tipo-brief.middleware"), exports);
+__exportStar(require("./auth.middleware"), exports);
 __exportStar(require("./validar-jwt"), exports);
 //# sourceMappingURL=index.js.map

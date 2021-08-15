@@ -11,11 +11,13 @@ export const usuarioRouter = Router();
 usuarioRouter.get('/', controllers.obtenerUsuarios);
 
 usuarioRouter.get('/:id',[
-   check('id').custom( helpers.existeIdUsuario ),
-   middlewares.validarCampos 
-], controllers.obtenerUsuario);
+    middlewares.validarJWT,
+    check('id').custom( helpers.existeIdUsuario ),
+    middlewares.validarCampos 
+],  controllers.obtenerUsuario);
 
 usuarioRouter.post('/',[
+    middlewares.validarJWT,
     check('nombre','El nombre es requerido').notEmpty(),
     check('email','Debes ingresar un email valido').isEmail(),
     check('password','El password es requerido').notEmpty(),
@@ -30,6 +32,7 @@ usuarioRouter.post('/',[
 
 usuarioRouter.put('/:id',[
     check('id').custom( helpers.existeIdUsuario ),
+    middlewares.existEmailUsuario,
     middlewares.validarCampos
 ], controllers.actualizarUsuario);
 

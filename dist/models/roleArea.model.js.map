@@ -1,0 +1,1 @@
+{"version":3,"file":"roleArea.model.js","sourceRoot":"","sources":["../../models/roleArea.model.ts"],"names":[],"mappings":";;;;;;AAAA,yCAAqC;AACrC,kEAAmC;AAGtB,QAAA,QAAQ,GAAG,oBAAE,CAAC,MAAM,CAAC,WAAW,EAAC;IAE1C,MAAM,EAAC;QACH,IAAI,EAAC,qBAAS,CAAC,OAAO;QACtB,aAAa,EAAE,IAAI;QACnB,UAAU,EAAE,IAAI;KACnB;CACJ,EAAC;IACE,eAAe,EAAE,IAAI;CACxB,CAAC,CAAC"}

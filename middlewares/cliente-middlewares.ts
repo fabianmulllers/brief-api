@@ -20,13 +20,15 @@ export const existeNombreCliente = async ( req: Request, res: Response, next: Ne
             
             filtro = {
                 [Op.not] : [{ cli_id: id }],
-                nombre: helpers.estandarizarString( nombre )
+                nombre: helpers.estandarizarString( nombre ),
+                estado: true
             }
     
         }else{
     
             filtro = {
-                nombre: helpers.estandarizarString( nombre )
+                nombre: helpers.estandarizarString( nombre ),
+                estado: true
              }
     
         }

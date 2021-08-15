@@ -4,5 +4,6 @@ export * from './usuario.middleware'
 export * from './empresa.middleware'
 export * from './cliente-middlewares'
 export * from './tipo-brief.middleware'
+export * from './auth.middleware'
 
 export * from './validar-jwt'

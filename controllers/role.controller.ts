@@ -3,13 +3,15 @@ import Sequelize  from 'sequelize'
 
 import { Role } from '../models'
 import * as helpers from '../helpers'
-import { param } from 'express-validator'
 export const obtenerRoles = async ( req: Request, res: Response) => {
     
     try {
 
         // obtenemos todos los roles con estado: true (No han sido eliminado)
-        const roles = await Role.findAll( { where: {estado : true } } );
+        const roles = await Role.findAll( { 
+            attributes:[['rol_id','id'],'nombre'],
+            where: {estado : true } 
+        } );
         return res.json( roles );    
 
     } catch (error) {
@@ -23,11 +25,29 @@ export const obtenerRoles = async ( req: Request, res: Response) => {
 
 }
 
-export const obtenerRole = ( req: Request, res: Response) => {
+export const obtenerRole = async( req: Request, res: Response) => {
 
-    res.json({
-        msg:"obtenerRole"
-    })
+        try {
+            
+            const { id } = req.params
+
+            const role = await Role.findOne({
+                    
+                attributes: [['rol_id','id'],'nombre'],
+                where:{
+                    estado: true,
+                    rol_id: id
+                }
+
+            })
+
+            return res.json( role );
+
+        } catch (error) {
+            return res.status(500).json({
+                msg: helpers.errorServidor()
+            });
+        }
 }
 
 export const crearRole = async (req: Request, res: Response) => {

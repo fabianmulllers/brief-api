@@ -1,42 +1,32 @@
 import { Request, Response } from "express";
-import bcrypt from 'bcrypt';
 
-
-
-import { Usuario } from '../models/usuario.model';
 import * as helpers from '../helpers'
-
+import * as models from '../models'
 
 export const login = async( req: Request, res: Response) => {
-        
 
     try {
 
-        const { email, password } = req.body;
+        const { email } = req.body;
             
         //obtenemos el usuario por el email
-        const usuario:any = await Usuario.findOne({ where: {email:email} } )
-        if( !usuario ){
-            return res.status(400).json({
-                msg:`No existe un usuario con el email`
-            })
-        }
-        console.log( usuario );
-        if( !usuario.estado){
-            return res.status(400).json({
-                msg:`El usuario actualmente esta inactivo`
-            })
-        }
-
-        //verificamos si el password esta correcto
-        if( !bcrypt.compareSync( password, usuario.password ) ){
-            
-            return res.status(400).json({
-                msg:`El password ingresado es incorrecto`
-            })
-        }
+        let usuario:any = await models.Usuario.findOne({ 
+            attributes:['nombre','email','avatar'],
+            where: {email:email},
+            include:[
+                {
+                    attributes:[['are_id','id'],'nombre'],
+                    model:models.Area
+                },
+                {
+                    attributes:[['rol_id','id'],'nombre'],
+                    model:models.Role
+                }
+            ]
+        } )      
 
         const token = await helpers.generarJWT( usuario.email )
+        usuario 
         
         
         return res.json({ 
@@ -46,12 +36,50 @@ export const login = async( req: Request, res: Response) => {
         
     } catch (error) {
 
-            
         console.log( error );
         return res.status(500).json({
             msg: helpers.errorServidor()
         })
     }
+}
 
+
+export const validarToken =  async( req: Request, res: Response) => {
+   
+    try {
+
+        const {email} = req.usuario;
+
+        let usuario:any = await models.Usuario.findOne({ 
+            attributes:['nombre','email','avatar'],
+            where: {email:email},
+            include:[
+                {
+                    attributes:[['are_id','id'],'nombre'],
+                    model:models.Area
+                },
+                {
+                    attributes:[['rol_id','id'],'nombre'],
+                    model:models.Role
+                }
+            ]
+        } )
+        
+        const token = await helpers.generarJWT( usuario.email )
+        
+        return res.json({
+            usuario,
+            token: token
+        });
+
+    } catch (error) {
+                                    
+    
+        console.log( error );
+        return res.status(500).json({
+            msg: helpers.errorServidor()
+        })
+
+    }
 
 }

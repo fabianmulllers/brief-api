@@ -30,11 +30,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verRoles = exports.agregarRoles = exports.eliminarArea = exports.actualizarArea = exports.crearArea = exports.obtenerArea = exports.obtenerAreas = void 0;
 const helpers = __importStar(require("../helpers"));
-const models_1 = require("../models");
-const role_model_1 = require("../models/role.model");
+const models = __importStar(require("../models"));
 const obtenerAreas = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const areas = yield models_1.Area.findAll({ where: { estado: true } });
+        const areas = yield models.Area.findAll({
+            attributes: [['are_id', 'id'], 'nombre'],
+            where: { estado: true },
+            include: {
+                model: models.Role,
+                where: {
+                    estado: true,
+                },
+                attributes: [['rol_id', 'id'], 'nombre'],
+                through: { attributes: [] }
+            }
+        });
         return res.json(areas);
     }
     catch (error) {
@@ -48,7 +58,7 @@ exports.obtenerAreas = obtenerAreas;
 const obtenerArea = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const area = yield models_1.Area.findByPk(id);
+        const area = yield models.Area.findByPk(id);
         return res.json(area);
     }
     catch (error) {
@@ -62,7 +72,7 @@ exports.obtenerArea = obtenerArea;
 const crearArea = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { nombre } = req.body;
-        const area = yield models_1.Area.create({ nombre });
+        const area = yield models.Area.create({ nombre });
         return res.json(area);
     }
     catch (error) {
@@ -77,7 +87,7 @@ const actualizarArea = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const { id } = req.params;
         const { nombre } = req.body;
-        const area = yield models_1.Area.findByPk(id);
+        const area = yield models.Area.findByPk(id);
         yield (area === null || area === void 0 ? void 0 : area.update({ nombre }, { where: { are_id: id } }));
         return res.json(area);
     }
@@ -92,7 +102,7 @@ exports.actualizarArea = actualizarArea;
 const eliminarArea = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const area = yield models_1.Area.findByPk(id);
+        const area = yield models.Area.findByPk(id);
         yield (area === null || area === void 0 ? void 0 : area.update({ estado: false }, { where: { are_id: id } }));
         return res.json(area);
     }
@@ -107,7 +117,7 @@ exports.eliminarArea = eliminarArea;
 const agregarRoles = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id, role } = req.body;
-        const area = yield models_1.Area.findByPk(id);
+        const area = yield models.Area.findByPk(id);
         area.addRoles(role);
     }
     catch (error) {
@@ -121,16 +131,18 @@ exports.agregarRoles = agregarRoles;
 const verRoles = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        // await Area.findByPk( id ).then( (area:any) => {
-        //     area.getRoles( { attributes:['nombre'] } ).then( (roles:any) => { 
-        //         res.json( roles );
-        //     })
-        // })
-        const area = yield models_1.Area.findByPk(id, { include: {
-                model: role_model_1.Role,
-                attributes: ['nombre']
-            } });
-        res.json(area);
+        const area = yield models.Area.findByPk(id, {
+            attributes: [],
+            include: {
+                model: models.Role,
+                where: {
+                    estado: true
+                },
+                attributes: [['rol_id', 'id'], 'nombre'],
+                through: { attributes: [] }
+            }
+        });
+        res.json(area.roles);
     }
     catch (error) {
         console.log(error);

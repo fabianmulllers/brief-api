@@ -15,19 +15,7 @@ exports.Usuario = connection_1.default.define('usuario', {
     },
     nombre: {
         type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-        validate: {
-            isAlpha: {
-                msg: "el nombre solo puede contenerer letras"
-            },
-            len: {
-                args: [3, 255],
-                msg: "EL nombre tiene que ser entre 3 y 255 caracteres"
-            },
-            notNull: {
-                msg: "el campo no puede ser nulo"
-            }
-        },
+        allowNull: false
     },
     email: {
         type: sequelize_1.DataTypes.STRING,
